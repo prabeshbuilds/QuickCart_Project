@@ -15,6 +15,7 @@ pipeline {
         DEPLOY_PORT   = "22"
 
         APP_PORT      = "3000"
+        ENV_FILE = "/home/ubuntu/.env"
     }
 
     stages {
