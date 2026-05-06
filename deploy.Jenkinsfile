@@ -1,6 +1,9 @@
 pipeline {
     agent any
 
+    triggers {
+    githubPush()
+    }
     environment {
         APP_NAME   = "nextjs-app"
         IMAGE_NAME = "prabeshdevops/nextjs-app"
