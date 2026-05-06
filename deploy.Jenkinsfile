@@ -8,7 +8,7 @@ pipeline {
     environment {
         APP_NAME      = "nextjs-app"
         IMAGE_NAME    = "prabeshdevops/nextjs-app"
-        IMAGE_TAG     = "latest"
+        IMAGE_TAG     = "${env.GIT_COMMIT.take(7)}"
 
         DEPLOY_SERVER = "50.16.100.161"
         DEPLOY_USER   = "ubuntu"
