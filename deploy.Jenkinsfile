@@ -17,7 +17,7 @@ pipeline {
 
         stage('📥 Pull Docker Image') {
             steps {
-                sshagent(['ubuntu']) {
+                sshagent(['deployment-ssh']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no -p ${DEPLOY_PORT} ${DEPLOY_USER}@${DEPLOY_SERVER} \
                     docker pull ${IMAGE_NAME}:${IMAGE_TAG}
@@ -28,7 +28,7 @@ pipeline {
 
         stage('🛑 Stop Old Container') {
             steps {
-                sshagent(['ubuntu']) {
+                sshagent(['deployment-ssh']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no -p ${DEPLOY_PORT} ${DEPLOY_USER}@${DEPLOY_SERVER} '
                     docker stop ${APP_NAME} || true &&
@@ -41,7 +41,7 @@ pipeline {
 
         stage('🚀 Run New Container') {
             steps {
-                sshagent(['ubuntu']) {
+                sshagent(['deployment-ssh']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no -p ${DEPLOY_PORT} ${DEPLOY_USER}@${DEPLOY_SERVER} '
                     docker run -d \
