@@ -10,7 +10,7 @@ pipeline {
         IMAGE_NAME    = "prabeshdevops/nextjs-app"
         IMAGE_TAG     = "${env.GIT_COMMIT.take(7)}"
 
-        DEPLOY_SERVER = "50.16.100.161"
+        DEPLOY_SERVER = "98.91.218.118"
         DEPLOY_USER   = "ubuntu"
         DEPLOY_PORT   = "22"
 
