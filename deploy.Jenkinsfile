@@ -11,6 +11,7 @@ pipeline {
 
         APP_NAME = "nextjs-app"
         APP_PORT = "3000"
+
         ENV_FILE = "/home/ubuntu/.env"
     }
 
@@ -27,13 +28,13 @@ pipeline {
             }
         }
 
-        stage('🛑 Stop Old Container') {
+        stage('🛑 Clean Old Container & Free Port') {
             steps {
                 sshagent(['deployment-ssh']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no -p ${DEPLOY_PORT} ${DEPLOY_USER}@${DEPLOY_SERVER} '
-                    docker stop ${APP_NAME} || true &&
-                    docker rm ${APP_NAME} || true
+                    docker rm -f ${APP_NAME} || true &&
+                    sudo fuser -k ${APP_PORT}/tcp || true
                     '
                     """
                 }
@@ -48,6 +49,7 @@ pipeline {
                     docker run -d \
                     --name ${APP_NAME} \
                     -p ${APP_PORT}:3000 \
+                    --env-file ${ENV_FILE} \
                     ${IMAGE_NAME}:${IMAGE_TAG}
                     '
                     """
@@ -58,8 +60,8 @@ pipeline {
         stage('🔍 Health Check') {
             steps {
                 sh """
-                sleep 10
-                curl -f http://${DEPLOY_SERVER}:${APP_PORT}
+                sleep 15
+                curl -f http://${DEPLOY_SERVER}:${APP_PORT} || exit 1
                 """
             }
         }
@@ -71,7 +73,7 @@ pipeline {
         }
 
         failure {
-            echo '❌ Deployment Failed!'
+            echo '❌ Deployment Failed! Check logs.'
         }
     }
 }
