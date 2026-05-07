@@ -1,31 +1,26 @@
 pipeline {
     agent any
 
-    triggers {
-        githubPush()
-    }
-
     environment {
-        APP_NAME      = "nextjs-app"
-        IMAGE_NAME    = "prabeshdevops/nextjs-app"
-        IMAGE_TAG     = "${env.GIT_COMMIT.take(7)}"
+        IMAGE_NAME = "prabeshdevops/nextjs-app"
+        IMAGE_TAG  = "latest"
 
         DEPLOY_SERVER = "98.91.218.118"
         DEPLOY_USER   = "ubuntu"
         DEPLOY_PORT   = "22"
 
-        APP_PORT      = "3000"
-        ENV_FILE = "/home/ubuntu/.env"
+        APP_NAME = "nextjs-app"
+        APP_PORT = "3000"
     }
 
     stages {
 
         stage('📥 Pull Docker Image') {
             steps {
-                sshagent(['deployment-ssh']) {
+                sshagent(['ubuntu']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no -p $DEPLOY_PORT $DEPLOY_USER@$DEPLOY_SERVER \\
-                        'docker pull $IMAGE_NAME:$IMAGE_TAG'
+                    ssh -o StrictHostKeyChecking=no -p ${DEPLOY_PORT} ${DEPLOY_USER}@${DEPLOY_SERVER} \
+                    docker pull ${IMAGE_NAME}:${IMAGE_TAG}
                     """
                 }
             }
@@ -33,10 +28,12 @@ pipeline {
 
         stage('🛑 Stop Old Container') {
             steps {
-                sshagent(['deployment-ssh']) {
+                sshagent(['ubuntu']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no -p $DEPLOY_PORT $DEPLOY_USER@$DEPLOY_SERVER \\
-                        'docker stop $APP_NAME || true && docker rm $APP_NAME || true'
+                    ssh -o StrictHostKeyChecking=no -p ${DEPLOY_PORT} ${DEPLOY_USER}@${DEPLOY_SERVER} '
+                    docker stop ${APP_NAME} || true &&
+                    docker rm ${APP_NAME} || true
+                    '
                     """
                 }
             }
@@ -44,14 +41,14 @@ pipeline {
 
         stage('🚀 Run New Container') {
             steps {
-                sshagent(['deployment-ssh']) {
+                sshagent(['ubuntu']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no -p $DEPLOY_PORT $DEPLOY_USER@$DEPLOY_SERVER \\
-                        'docker run -d \
-                            --name $APP_NAME \
-                            --restart unless-stopped \
-                            -p $APP_PORT:3000 \
-                            $IMAGE_NAME:$IMAGE_TAG'
+                    ssh -o StrictHostKeyChecking=no -p ${DEPLOY_PORT} ${DEPLOY_USER}@${DEPLOY_SERVER} '
+                    docker run -d \
+                    --name ${APP_NAME} \
+                    -p ${APP_PORT}:3000 \
+                    ${IMAGE_NAME}:${IMAGE_TAG}
+                    '
                     """
                 }
             }
@@ -60,14 +57,8 @@ pipeline {
         stage('🔍 Health Check') {
             steps {
                 sh """
-                    echo "Checking application health..."
-
-                    curl -f --max-time 10 http://$DEPLOY_SERVER:$APP_PORT || {
-                        echo "❌ Health check failed"
-                        exit 1
-                    }
-
-                    echo "✅ Application is running successfully"
+                sleep 10
+                curl http://${DEPLOY_SERVER}:${APP_PORT}
                 """
             }
         }
@@ -75,10 +66,11 @@ pipeline {
 
     post {
         success {
-            echo "✅ Deployment Successful!"
+            echo '✅ Deployment Successful!'
         }
+
         failure {
-            echo "❌ Deployment Failed!"
+            echo '❌ Deployment Failed!'
         }
     }
 }
