@@ -59,7 +59,7 @@ pipeline {
             steps {
                 sh """
                 sleep 10
-                curl http://${DEPLOY_SERVER}:${APP_PORT}
+                curl -f http://${DEPLOY_SERVER}:${APP_PORT}
                 """
             }
         }
