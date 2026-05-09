@@ -28,7 +28,7 @@ pipeline {
                     sh '''
                         npx sonar-scanner \
                         -Dsonar.projectKey=quickcart \
-                        -Dsonar.projectName=QuickCart \
+                        -Dsonar.projectName=Quickcart-Jenkins-Project \
                         -Dsonar.sources=. \
                         -Dsonar.host.url=$SONAR_HOST_URL \
                         -Dsonar.login=$SONAR_AUTH_TOKEN
