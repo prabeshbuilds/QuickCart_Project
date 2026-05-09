@@ -19,7 +19,7 @@ pipeline {
 
         stage('📥 Pull Docker Image') {
             steps {
-                sshagent(['prabesh']) {
+                sshagent(['deployment-server-ssh']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no -p ${DEPLOY_PORT} ${DEPLOY_USER}@${DEPLOY_SERVER} \
                     docker pull ${IMAGE_NAME}:${IMAGE_TAG}
@@ -30,7 +30,7 @@ pipeline {
 
         stage('🛑 Clean Old Container & Free Port') {
             steps {
-                sshagent(['prabesh']) {
+                sshagent(['deployment-server-ssh']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no -p ${DEPLOY_PORT} ${DEPLOY_USER}@${DEPLOY_SERVER} '
                     docker rm -f ${APP_NAME} || true &&
@@ -43,7 +43,7 @@ pipeline {
 
         stage('🚀 Run New Container') {
             steps {
-                sshagent(['prabesh']) {
+                sshagent(['deployment-server-ssh']) {
                     sh """
                     ssh -o StrictHostKeyChecking=no -p ${DEPLOY_PORT} ${DEPLOY_USER}@${DEPLOY_SERVER} '
                     docker run -d \
@@ -59,7 +59,7 @@ pipeline {
 
         stage('🔍 Health Check') {
             steps {
-                sshagent(['prabesh']) {
+                sshagent(['deployment-server-ssh']) {
                     sh """
                     sleep 15
                     curl -f http://${DEPLOY_SERVER}:${APP_PORT} || exit 1
