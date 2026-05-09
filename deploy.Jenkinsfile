@@ -5,14 +5,14 @@ pipeline {
         IMAGE_NAME = "prabeshdevops/nextjs-app"
         IMAGE_TAG  = "latest"
 
-        DEPLOY_SERVER = "98.91.218.118"
-        DEPLOY_USER   = "ubuntu"
+        DEPLOY_SERVER = "185.199.53.175"
+        DEPLOY_USER   = "prabesh"
         DEPLOY_PORT   = "22"
 
         APP_NAME = "nextjs-app"
         APP_PORT = "3000"
 
-        ENV_FILE = "/home/ubuntu/.env"
+        ENV_FILE = "/home/prabesh/.nextjs.env"
     }
 
     stages {
