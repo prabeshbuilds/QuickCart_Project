@@ -30,7 +30,7 @@ pipeline {
                         -Dsonar.projectKey=quickcart \
                         -Dsonar.projectName=QuickCart \
                         -Dsonar.sources=. \
-                        -Dsonar.host.url=$SONAR_HOST_URL \
+                        -Dsonar.host.url=http://192.168.18.228:9000L \
                         -Dsonar.token=$SONAR_AUTH_TOKEN
                     '''
                 }
