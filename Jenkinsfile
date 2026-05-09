@@ -26,8 +26,7 @@ pipeline {
             steps {
                 withSonarQubeEnv("${SONARQUBE_ENV}") {
                     sh '''
-                        npm install -g sonarqube-scanner
-                        sonar-scanner \
+                        npx sonar-scanner \
                         -Dsonar.projectKey=quickcart \
                         -Dsonar.projectName=QuickCart \
                         -Dsonar.sources=. \
