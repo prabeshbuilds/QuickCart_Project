@@ -2,74 +2,80 @@ pipeline {
     agent any
 
     environment {
-        APP_NAME   = "nextjs-app"
         IMAGE_NAME = "prabeshdevops/nextjs-app"
         IMAGE_TAG  = "latest"
 
-        DEPLOY_SERVER = "50.16.100.161"
-        DEPLOY_USER   = "ubuntu"
+        DEPLOY_SERVER = "185.199.53.175"
+        DEPLOY_USER   = "prabesh"
         DEPLOY_PORT   = "22"
 
+        APP_NAME = "nextjs-app"
         APP_PORT = "3000"
+
+        ENV_FILE = "/home/prabesh/.nextjs.env"
     }
 
     stages {
 
-        stage('🚀 Deploy to Server') {
+        stage('📥 Pull Docker Image') {
             steps {
-                sshagent(['deployment-ssh']) {
-                    sh '''
-                        set -e
+                sshagent(['deployment-server-ssh']) {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no -p ${DEPLOY_PORT} ${DEPLOY_USER}@${DEPLOY_SERVER} \
+                    docker pull ${IMAGE_NAME}:${IMAGE_TAG}
+                    """
+                }
+            }
+        }
 
-                        echo "🚀 Connecting to server..."
+        stage('🛑 Clean Old Container & Free Port') {
+            steps {
+                sshagent(['deployment-server-ssh']) {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no -p ${DEPLOY_PORT} ${DEPLOY_USER}@${DEPLOY_SERVER} '
+                    docker rm -f ${APP_NAME} || true &&
+                    sudo fuser -k ${APP_PORT}/tcp || true
+                    '
+                    """
+                }
+            }
+        }
 
-                        ssh -o StrictHostKeyChecking=no -p $DEPLOY_PORT $DEPLOY_USER@$DEPLOY_SERVER "
-                            set -e
-
-                            echo '📥 Pulling latest Docker image...'
-                            docker pull $IMAGE_NAME:$IMAGE_TAG
-
-                            echo '🛑 Stopping old container if exists...'
-                            docker stop $APP_NAME || true
-                            docker rm $APP_NAME || true
-
-                            echo '▶️ Starting new container...'
-                            docker run -d \
-                                --name $APP_NAME \
-                                --restart unless-stopped \
-                                -p $APP_PORT:3000 \
-                                $IMAGE_NAME:$IMAGE_TAG
-
-                            echo '🔍 Checking running containers...'
-                            docker ps | grep $APP_NAME || true
-                        "
-                    '''
+        stage('🚀 Run New Container') {
+            steps {
+                sshagent(['deployment-server-ssh']) {
+                    sh """
+                    ssh -o StrictHostKeyChecking=no -p ${DEPLOY_PORT} ${DEPLOY_USER}@${DEPLOY_SERVER} '
+                    docker run -d \
+                    --name ${APP_NAME} \
+                    -p ${APP_PORT}:3000 \
+                    --env-file ${ENV_FILE} \
+                    ${IMAGE_NAME}:${IMAGE_TAG}
+                    '
+                    """
                 }
             }
         }
 
         stage('🔍 Health Check') {
             steps {
-                sh '''
-                    echo "Checking application health..."
-
-                    curl -f http://$DEPLOY_SERVER:$APP_PORT || {
-                        echo "❌ Health check failed"
-                        exit 1
-                    }
-
-                    echo "✅ App is running successfully"
-                '''
+                sshagent(['deployment-server-ssh']) {
+                    sh """
+                    sleep 15
+                    curl -f http://${DEPLOY_SERVER}:${APP_PORT} || exit 1
+                    """
+                }
             }
         }
     }
 
     post {
         success {
-            echo "✅ Deployment Successful!"
+            echo '✅ Deployment Successful!'
         }
+
         failure {
-            echo "❌ Deployment Failed!"
+            echo '❌ Deployment Failed! Check logs.'
         }
     }
 }
