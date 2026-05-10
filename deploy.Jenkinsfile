@@ -11,6 +11,7 @@ pipeline {
 
         APP_NAME = "nextjs-app"
         APP_PORT = "3000"
+        
 
         ENV_FILE = "/home/prabesh/.nextjs.env"
     }
