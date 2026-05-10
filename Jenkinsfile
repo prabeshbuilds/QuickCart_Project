@@ -5,6 +5,7 @@ pipeline {
         DOCKER_IMAGE = "prabeshdevops/nextjs-app"
         DOCKER_TAG = "latest"
         DOCKER_CREDENTIALS_ID = "dockerhub-credentials"
+        SONARQUBE_ENV = "sonarqube-server"   // Jenkins configured name
     }
 
     stages {
@@ -20,6 +21,29 @@ pipeline {
                 sh 'npm install'
             }
         }
+
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv("${SONARQUBE_ENV}") {
+                    sh '''
+                        npx sonar-scanner \
+                        -Dsonar.projectKey=quickcart \
+                        -Dsonar.projectName=QuickCart \
+                        -Dsonar.sources=. \
+                        -Dsonar.host.url=$SONAR_HOST_URL \
+                        -Dsonar.token=$SONAR_AUTH_TOKEN
+                    '''
+                }
+            }
+        }
+
+        // stage('Quality Gate') {
+        //     steps {
+        //         timeout(time: 5, unit: 'MINUTES') {
+        //             waitForQualityGate abortPipeline: true
+        //         }
+        //     }
+        // }
 
         stage('Build Next.js App') {
             steps {
@@ -50,12 +74,11 @@ pipeline {
                 sh "docker push $DOCKER_IMAGE:$DOCKER_TAG"
             }
         }
-
     }
 
     post {
         success {
-            echo '✅ Build & Push Successful!'
+            echo '✅ Build, Scan & Push Successful!'
         }
         failure {
             echo '❌ Pipeline Failed!'
