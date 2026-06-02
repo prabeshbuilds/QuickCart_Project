@@ -36,20 +36,33 @@ It demonstrates a complete production-like workflow including:
 
 ---
 
-# 🏗️ System Architecture
-GitHub Repository
-↓
-Jenkins CI/CD Pipeline
-↓
-SonarQube Code Quality Analysis
-↓
-Docker Image Build
-↓
-Docker Container Deployment
-↓
-AWS EC2 (Inside VPC)
-↓
-Public Access via IP / Load Balancer
+## Monitoring
+
+This project includes Prometheus and Grafana monitoring through Docker Compose.
+
+1. Start the app and monitoring stack
+
+    ```bash
+    docker compose up -d --build
+    ```
+
+2. Open the services
+
+    - App: http://localhost:3000
+    - Prometheus: http://localhost:9090
+    - Grafana: http://localhost:3001
+
+Grafana is provisioned with Prometheus as the default data source and includes a **QuickCart Overview** dashboard. The default Grafana login is `admin` / `admin`.
+
+Prometheus scrapes the Next.js metrics endpoint at:
+
+```text
+http://nextjs-app:3000/api/metrics
+```
+
+---
+
+## Contributing
 
 
 ---
