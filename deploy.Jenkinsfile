@@ -5,7 +5,7 @@ pipeline {
         IMAGE_NAME = "prabeshdevops/nextjs-app"
         IMAGE_TAG  = "latest"
 
-        DEPLOY_SERVER = "185.199.53.175"
+        DEPLOY_SERVER = "32.192.189.220"
         DEPLOY_USER   = "prabesh"
         DEPLOY_PORT   = "22"
 
