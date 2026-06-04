@@ -13,7 +13,7 @@ pipeline {
         APP_PORT = "3000"
         
 
-        ENV_FILE = "/home/prabesh/.nextjs.env"
+        ENV_FILE = "/home/ubuntu/.nextjs.env"
     }
 
     stages {
