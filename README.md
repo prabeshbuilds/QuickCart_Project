@@ -1,45 +1,38 @@
-# QuickCart - A simple eCommerce website
+# 🛒 QuickCart - Full DevOps eCommerce Frontend (CI/CD + Docker + SonarQube + AWS)
 
-QuickCart is an open-source **Next.js eCommerce frontend** project.  
-It provides a modern, fast and customizable shopping UI.  
-This repo is **frontend only** – contributors can improve the design, add new pages, animations and more.
+QuickCart is an open-source **Next.js eCommerce frontend project** designed with modern UI/UX and real-world **DevOps practices**.
 
+It demonstrates a complete production-like workflow including:
 
-
-
-
----
-
-## Features
-
--   Built with **Next.js + Tailwind CSS**
--   Responsive design
--   Reusable components
--   Customizable layouts and colors
--   Open for contributions (UI/UX, animations, themes, layouts etc.)
+- CI/CD automation using Jenkins  
+- Code quality analysis using SonarQube  
+- Docker containerization  
+- Deployment on AWS VPC (EC2-based infrastructure)
 
 ---
 
-## Getting Started
+# 🚀 Tech Stack
 
-1. Clone the repo
+- ⚡ Next.js
+- 🎨 Tailwind CSS
+- 🐳 Docker
+- 🔧 Jenkins (CI/CD Pipeline)
+- 🧪 SonarQube (Code Quality Analysis)
+- ☁️ AWS (VPC, EC2, Security Groups)
+- 🌐 Nginx (Optional reverse proxy)
 
-    ```bash
-    git clone https://github.com/GreatStackDev/QuickCart.git
-    cd QuickCart
-    ```
+---
 
-2. Install dependencies
+# ✨ Features
 
-    ```bash
-    npm install
-    ```
-
-3. Run locally
-
-    ```bash
-    npm run dev
-    ```
+- Modern responsive eCommerce UI
+- Fast and optimized Next.js application
+- Reusable component-based architecture
+- Dockerized application
+- Automated CI/CD pipeline
+- Code quality checks using SonarQube
+- Cloud deployment on AWS VPC
+- Production-ready DevOps workflow
 
 ---
 
@@ -71,29 +64,49 @@ http://nextjs-app:3000/api/metrics
 
 ## Contributing
 
-We welcome all kinds of contributions! You can:
-
-- Create new pages
-- Improve layouts
-- Add animations and transitions
-- Enhance responsiveness
-- Refactor components
-- Suggest new UI/UX ideas
-- Add themes or color variations
-- Introduce accessibility improvements
-- Add filtering/search features
-- Improve documentation
-
-Check out [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ---
 
-## License
+# 🧪 SonarQube (Code Quality)
 
-This project is licensed under the **MIT License**.
+SonarQube is used to ensure clean and maintainable code.
+
+## It analyzes:
+
+- Bugs
+- Security Vulnerabilities
+- Code Smells
+- Duplications
+- Maintainability Rating
 
 ---
 
-## 🌟 Contributors
+## 📜 Jenkins Stage: SonarQube Analysis
 
-Thanks to everyone who contributes to **QuickCart**!# QuickCart_Project
+```groovy
+stage('SonarQube Analysis') {
+    steps {
+        withSonarQubeEnv('SonarQube') {
+            sh '''
+                npx sonar-scanner \
+                -Dsonar.projectKey=quickcart \
+                -Dsonar.projectName=QuickCart \
+                -Dsonar.sources=. \
+                -Dsonar.host.url=$SONAR_HOST_URL \
+                -Dsonar.login=$SONAR_AUTH_TOKEN
+            '''
+        }
+    }
+}
+
+☁️ AWS Deployment (VPC Architecture)
+🌐 Infrastructure
+VPC with public subnet
+Internet Gateway attached
+Route tables configured
+🖥️ EC2 Instance
+Ubuntu 22.04 LTS
+Docker installed
+Jenkins agent or SSH deployment
+
+ MIT License
