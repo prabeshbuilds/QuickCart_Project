@@ -10,7 +10,7 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code') {
+        stage('Checkout Codee') {
             steps {
                 git branch: 'main', url: 'https://github.com/prabeshbuilds/QuickCart_Project.git'
             }
@@ -78,7 +78,7 @@ pipeline {
 
     post {
         success {
-            echo '✅ Build, Scan & Push Successful!'
+            echo '✅ Build, Scan & Push Successfullll!'
         }
         failure {
             echo '❌ Pipeline Failed!'
